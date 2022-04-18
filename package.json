@@ -1,0 +1,22 @@
+{
+  "name": "zkp-app-boilerplate",
+  "version": "0.1.0",
+  "description": "Boilerplate for zkp application",
+  "repository": "https://github.com/wanseob/zkp-app-boilerplate",
+  "author": "Wanseob Lim<email@wanseob.com>",
+  "workspaces": [
+    "app",
+    "circuits",
+    "contracts"
+  ],
+  "scripts": {
+    "build": "yarn build:circuits && yarn build:contracts && yarn build:app",
+    "build:app": "yarn workspace app build",
+    "build:contracts": "yarn workspace contracts build",
+    "build:circuits": "yarn workspace circuits compile"
+  },
+  "private": true,
+  "devDependencies": {
+    "ts-node": "^10.4.0"
+  }
+}

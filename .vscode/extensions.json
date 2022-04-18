@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "iden3.circom",
+    "dbaeumer.vscode-eslint",
+    "JuanBlanco.solidity"
+  ]
+}
