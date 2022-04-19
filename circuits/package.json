@@ -9,12 +9,14 @@
     "src",
     "dist",
     "zk",
-    "circuits"
+    "circuits",
+    "browser"
   ],
   "scripts": {
     "test": "ts-mocha -p tsconfig.json test/**/*.ts --timeout 30000 --exit",
     "pretest": "tsc -p tsconfig.json",
     "precompile": "scripts/prerequisites.sh && mkdir -p zk/circuits zk/zkeys zk/verifiers",
+    "postcompile": "cp zk/zkeys/main.zkey ../app/public && cp zk/circuits/main_js/main.wasm ../app/public",
     "compile": "for circuit in circuits/*.circom; do circom $circuit --r1cs --sym --wasm -o zk/circuits;done && tsc",
     "export:sample-zkey": "for circuit in zk/circuits/*.r1cs; do snarkjs groth16 setup $circuit powersOfTau28_hez_final_15.ptau zk/zkeys/$(basename -- $circuit .r1cs).zkey;done",
     "export:verifier": "for zkey in zk/zkeys/*.zkey; do snarkjs zkey export solidityverifier $zkey zk/verifiers/$(basename -- $zkey .zkey | perl -nE 'say ucfirst').sol;done",

@@ -1,5 +1,3 @@
-/* eslint-disable node/no-missing-import */
-/* eslint-disable camelcase */
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
@@ -11,6 +9,8 @@ import {
 } from "../typechain";
 import { ZKPClient, EdDSA } from "circuits";
 import { BigNumber } from "ethers";
+import fs from "fs";
+import path from "path";
 
 describe("Test ZKP contract", function () {
   let verifier: Verifier;
@@ -25,7 +25,12 @@ describe("Test ZKP contract", function () {
       "0xABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD"
     ).init();
     zkApp = await new ZkApp__factory(deployer).deploy(verifier.address);
-    client = await new ZKPClient().init();
+    client = await new ZKPClient().init(
+      fs.readFileSync(
+        path.join(__dirname, "../../circuits/zk/circuits/main_js/main.wasm")
+      ),
+      fs.readFileSync(path.join(__dirname, "../../circuits/zk/zkeys/main.zkey"))
+    );
   });
   it("Should able to create a zkp and verify them", async function () {
     const msg = BigNumber.from("0xabcd");

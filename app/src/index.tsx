@@ -3,13 +3,19 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ChainId, DAppProvider, Config } from "@usedapp/core";
 
+
+const config: Config = {
+  multicallVersion: 1
+};
 ReactDOM.render(
-  <React.StrictMode>
+  <DAppProvider config={config}>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  </DAppProvider>,
+  document.getElementById("root")
 );
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

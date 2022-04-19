@@ -16,8 +16,8 @@ yarn
 # build app
 yarn build
 
-# Run the UI
-yarn workspace app start
+# run demo
+yarn demo
 ```
 
 ## Test your contracts

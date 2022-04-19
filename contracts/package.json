@@ -6,11 +6,11 @@
   "scripts": {
     "postinstall": "#yarn build",
     "test": "hardhat test",
-    "build": "hardhat compile && tsc",
+    "build": "hardhat compile && tsc -p tsconfig.build.json",
     "hardhat": "hardhat",
     "compile": "hardhat compile"
   },
-  "main": "dist/index.js",
+  "main": "dist/typechain/index.js",
   "types": "typechain/index.ts",
   "files": [
     "dist",

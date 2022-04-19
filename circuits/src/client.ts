@@ -1,9 +1,13 @@
-import fs from "fs";
-import path from "path";
-// @ts-ignore
 import buildCalculator from "../zk/circuits/main_js/witness_calculator";
 import { buildBabyjub } from "circomlibjs";
 import * as snarkjs from "snarkjs";
+import { keccak256 } from "ethers/lib/utils";
+
+export interface Proof {
+  a: [bigint, bigint];
+  b: [[bigint, bigint], [bigint, bigint]];
+  c: [bigint, bigint];
+}
 
 export class ZKPClient {
   private _calculator: any;
@@ -18,27 +22,21 @@ export class ZKPClient {
     );
   }
 
+  get babyjub() {
+    if (!this.initialized) throw Error("Not initialized");
+    return this._babyjub;
+  }
+
   get calculator() {
     if (!this.initialized) throw Error("Not initialized");
     return this._calculator;
   }
 
-  async init() {
+  async init(wasm: Buffer, zKey: Buffer) {
     if (this.initialized) return this;
     // you can adjust the file path here
-    const wasm = fs.readFileSync(
-      path.join(__dirname, "../../zk/circuits/main_js/main.wasm")
-    );
     [this._zkey, this._calculator, this._babyjub] = await Promise.all([
-      new Promise((resolve, reject) =>
-        fs.readFile(
-          path.join(__dirname, "../../zk/zkeys/main.zkey"),
-          (err, data) => {
-            if (err) reject(err);
-            else resolve(data);
-          }
-        )
-      ),
+      zKey,
       buildCalculator(wasm),
       buildBabyjub(),
     ]);
@@ -63,7 +61,7 @@ export class ZKPClient {
     S: bigint;
     R8x: bigint;
     R8y: bigint;
-  }) {
+  }): Promise<Proof> {
     const inputs = {
       M,
       Ax,

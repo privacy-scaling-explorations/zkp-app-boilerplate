@@ -12,13 +12,24 @@ contract ZkApp {
     }
 
     address public immutable verifier;
+    uint256[3][] public records; // just a sample var
 
     constructor(address verifier_) {
         verifier = verifier_;
     }
 
     /**
-     * Please adjust the IVerifier.sol and
+     * @dev This is the sample function
+     */
+    function record(uint256[3] memory publicSignals, Proof memory proof)
+        public
+    {
+        require(verify(publicSignals, proof), "SNARK verification failed");
+        records.push(publicSignals);
+    }
+
+    /**
+     * Please adjust the IVerifier.sol and the array length of publicSignals
      */
     function verify(uint256[3] memory publicSignals, Proof memory proof)
         public
@@ -32,5 +43,9 @@ contract ZkApp {
             publicSignals
         );
         return result;
+    }
+
+    function totalRecords() public view returns (uint256) {
+        return records.length;
     }
 }
