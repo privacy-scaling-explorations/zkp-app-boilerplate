@@ -1,5 +1,9 @@
 # Zk app boilerplate
 
+## Pre requisites
+
+* Install rust and [circom2](https://docs.circom.io/getting-started/installation/)
+
 ## Getting started
 
 ```shell
@@ -20,3 +24,14 @@ yarn workspace app start
 ```shell
 yarn workspace contracts test
 ```
+
+## Test your circuits
+```shell
+yarn workspace circuits test
+```
+
+## Test your app
+```shell
+yarn workspace app test
+```
+
