@@ -14,7 +14,7 @@
     "build:all": "yarn build:circuits && yarn build:contracts && yarn build:app",
     "build:app": "yarn workspace app build",
     "build:contracts": "yarn workspace contracts build",
-    "build:circuits": "yarn workspace circuits compile",
+    "build:circuits": "yarn workspace circuits build",
     "demo": "./demo.sh"
   },
   "private": true,
