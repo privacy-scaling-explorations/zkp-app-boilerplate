@@ -4,6 +4,8 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 // eslint-disable-next-line node/no-extraneous-import
 import { ZKPClient, EdDSA } from "circuits";
+import fs from "fs";
+import path from "path";
 
 describe("Test zkp circuit and scripts", function () {
   const privKey =
@@ -11,7 +13,13 @@ describe("Test zkp circuit and scripts", function () {
   let client: ZKPClient;
   let eddsa: EdDSA;
   beforeEach(async () => {
-    client = await new ZKPClient().init();
+    const wasm = fs.readFileSync(
+      path.join(__dirname, "../../circuits/zk/circuits/main_js/main.wasm")
+    );
+    const zkey = fs.readFileSync(
+      path.join(__dirname, "../../circuits/zk/zkeys/main.zkey")
+    );
+    client = await new ZKPClient().init(wasm, zkey);
     eddsa = await new EdDSA(privKey).init();
   });
   it("Should able to prove and verify the zkp", async function () {
