@@ -1,7 +1,6 @@
 import buildCalculator from "../zk/circuits/main_js/witness_calculator";
 import { buildBabyjub } from "circomlibjs";
 import * as snarkjs from "snarkjs";
-import { keccak256 } from "ethers/lib/utils";
 
 export interface Proof {
   a: [bigint, bigint];
