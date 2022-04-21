@@ -10,7 +10,7 @@ import SendTx from "./components/SendTx";
 import SignEdDSA from "./components/SignEdDSA";
 import Viewer from "./components/Viewer";
 import useEdDSA from "./hooks/useEdDSA";
-import Deploy, { contractKey } from "./components/Deploy";
+import Deploy from "./components/Deploy";
 
 // const address = process.env["REACT_APP_CONTRACT_ADDRESS"] as string;
 // if (typeof address !== "string") throw Error("Configure contract address");

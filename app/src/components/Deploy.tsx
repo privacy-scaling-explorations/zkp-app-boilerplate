@@ -1,25 +1,29 @@
 import { Verifier__factory, ZkApp__factory } from "contracts";
 import { useEthers, useLocalStorage } from "@usedapp/core";
-import { solidityKeccak256 } from "ethers/lib/utils";
+import { BytesLike, solidityKeccak256 } from "ethers/lib/utils";
 import { useEffect } from "react";
 
-export const contractKey = (chainId?: number) =>
-  `zkp-app-boilerplate:${solidityKeccak256(
-    ["bytes", "bytes"],
-    [ZkApp__factory.bytecode, Verifier__factory.bytecode]
-  )}:${chainId}`;
+export const key = (bytecode: BytesLike, chainId?: number) =>
+  `${solidityKeccak256(["bytes"], [bytecode])}:${chainId}`;
 
 function Deploy({ onResult }: { onResult: (deployed: string) => void }) {
   const { library, chainId } = useEthers();
 
-  const [deployed, storeDeployed] = useLocalStorage(contractKey(chainId));
+  const [zkApp, storeZkApp] = useLocalStorage(
+    key(ZkApp__factory.bytecode, chainId)
+  );
+  const [verifier, storeVerifier] = useLocalStorage(
+    key(Verifier__factory.bytecode, chainId)
+  );
+
   useEffect(() => {
-    if (deployed) onResult(deployed);
-  }, [deployed]);
+    if (zkApp) onResult(zkApp);
+  }, [zkApp]);
+
   return (
     <div>
-      {deployed ? (
-        `Deployed: ${deployed}`
+      {verifier ? (
+        `Verifier: ${verifier}`
       ) : (
         <button
           disabled={!library}
@@ -28,16 +32,30 @@ function Deploy({ onResult }: { onResult: (deployed: string) => void }) {
             const signer = library.getSigner();
             new Verifier__factory(signer)
               .deploy()
-              .then((verifier) =>
-                new ZkApp__factory(signer)
-                  .deploy(verifier.address)
-                  .then((zkApp) =>
-                    zkApp.deployed().then(() => storeDeployed(zkApp.address))
-                  )
+              .then((verifier) => storeVerifier(verifier.address));
+          }}
+        >
+          Deploy verifier
+        </button>
+      )}
+      <br/>
+      {zkApp ? (
+        `Deployed: ${zkApp}`
+      ) : (
+        <button
+          disabled={!library || !verifier}
+          onClick={async () => {
+            if (!library) throw Error("not connected");
+            console.log('verifier', verifier)
+            const signer = library.getSigner();
+            new ZkApp__factory(signer)
+              .deploy(verifier)
+              .then((zkApp) =>
+                zkApp.deployed().then(() => storeZkApp(zkApp.address))
               );
           }}
         >
-          Deploy
+          Deploy zk app contract
         </button>
       )}
     </div>
