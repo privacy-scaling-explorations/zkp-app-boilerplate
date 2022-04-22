@@ -6,32 +6,36 @@
 
 ## Getting started
 
-```shell
-# clone or fork this template repo
-git clone https://github.com/wanseob/zk-app-boilerplate
+1. Clone or fork this template repository.
+    ```shell
+    git clone https://github.com/wanseob/zk-app-boilerplate
+    ```
+2. Install packages
+    ```shell
+    yarn
+    ```
+3. Build: this compiles the circuits and exports artifacts. Then compiles the contracts and generate typescript clients.
+    ```shell
+    yarn build
+    ```
+4. Run a demo app using a localhost private network.
+    ```shell
+    yarn demo
+    ```
 
-# install dependencies
-yarn
+## Run tests
+1. Test contracts
+    ```shell
+    yarn workspace contracts test
+    ```
 
-# build app
-yarn build
+2. Test your circuits
+    ```shell
+    yarn workspace circuits test
+    ```
 
-# run demo
-yarn demo
-```
-
-## Test your contracts
-```shell
-yarn workspace contracts test
-```
-
-## Test your circuits
-```shell
-yarn workspace circuits test
-```
-
-## Test your app
-```shell
-yarn workspace app test
-```
+3. Test your app
+    ```shell
+    yarn workspace app test
+    ```
 
