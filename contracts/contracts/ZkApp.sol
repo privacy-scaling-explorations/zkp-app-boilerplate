@@ -38,7 +38,7 @@ contract ZkApp {
     /**
      * Please adjust the IVerifier.sol and the array length of publicSignals
      */
-    function verify(uint256[7] memory publicSignals, Proof memory proof)
+    function verify(uint256[3] memory publicSignals, Proof memory proof)
         public
         view
         returns (bool)
