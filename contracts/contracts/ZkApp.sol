@@ -2,7 +2,14 @@
 pragma solidity >=0.8.0;
 
 // Please note that you should adjust the length of the inputs
-import {IVerifier} from "./interfaces/IVerifier.sol";
+interface IVerifier {
+    function verifyProof(
+        uint256[2] memory a,
+        uint256[2][2] memory b,
+        uint256[2] memory c,
+        uint256[3] memory input
+    ) external view returns (bool r);
+}
 
 contract ZkApp {
     struct Proof {
@@ -31,7 +38,7 @@ contract ZkApp {
     /**
      * Please adjust the IVerifier.sol and the array length of publicSignals
      */
-    function verify(uint256[3] memory publicSignals, Proof memory proof)
+    function verify(uint256[7] memory publicSignals, Proof memory proof)
         public
         view
         returns (bool)
