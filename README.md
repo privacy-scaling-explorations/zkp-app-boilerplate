@@ -39,3 +39,7 @@
     yarn workspace app test
     ```
 
+
+## Example: EdDSA signature rollup
+
+Let's compress EdDSA signatures into one zk proof! Go to [tutorial!](./TUTORIAL.md)
