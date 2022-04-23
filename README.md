@@ -8,7 +8,7 @@
 
 1. Clone or fork this template repository.
     ```shell
-    git clone https://github.com/wanseob/zk-app-boilerplate
+    git clone https://github.com/wanseob/zkp-app-boilerplate
     ```
 2. Install packages
     ```shell
