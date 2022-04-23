@@ -55,11 +55,11 @@ export class ZKPClient {
     R8y,
   }: {
     M: bigint;
-    Ax: bigint;
-    Ay: bigint;
-    S: bigint;
-    R8x: bigint;
-    R8y: bigint;
+    Ax: bigint[];
+    Ay: bigint[];
+    S: bigint[];
+    R8x: bigint[];
+    R8y: bigint[];
   }): Promise<Proof> {
     const inputs = {
       M,

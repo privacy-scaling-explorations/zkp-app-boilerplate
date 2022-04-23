@@ -37,24 +37,24 @@ export const useVerifier = (address: string) => {
 /**
  * @dev This fetches data every block when the component is mounted
  */
-export const useTotalRecords = (address: string) => {
+export const useTotalSignedMessages = (address: string) => {
   const zkApp = useZKApp(address);
   const [totalRecords, setTotalRecords] = useState<BigNumber>();
   const { library, chainId } = useEthers();
 
-  const fetchTotalRecords = useCallback(async () => {
+  const fetchTotalSignedMessages = useCallback(async () => {
     if (!zkApp) return;
-    const _totalRecords = await zkApp.totalRecords();
+    const _totalRecords = await zkApp.totalSignedMessages();
     setTotalRecords(_totalRecords);
   }, [zkApp]);
 
   useEffect(() => {
-    fetchTotalRecords();
-    library?.on("block", fetchTotalRecords);
+    fetchTotalSignedMessages();
+    library?.on("block", fetchTotalSignedMessages);
     return () => {
-      library?.off("block", fetchTotalRecords);
+      library?.off("block", fetchTotalSignedMessages);
     };
-  }, [address, library, chainId, fetchTotalRecords]);
+  }, [address, library, chainId, fetchTotalSignedMessages]);
 
   return totalRecords;
 };
@@ -70,17 +70,17 @@ export enum TxState {
 /**
  * @dev Contract interfaction example with ZKP
  */
-export const useRecord = (address: string) => {
+export const useRecordSignedmessage = (address: string) => {
   const zkApp = useZKApp(address);
   const [txState, setTxState] = useState<TxState>(TxState.NONE);
   const { library, chainId, account } = useEthers();
 
-  const record = useCallback(
+  const recordSignedMessage = useCallback(
     async ({
       publicSignals,
       proof,
     }: {
-      publicSignals: [BigNumberish, BigNumberish, BigNumberish];
+      publicSignals: [BigNumberish];
       proof: {
         a: [BigNumberish, BigNumberish];
         b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]];
@@ -92,7 +92,7 @@ export const useRecord = (address: string) => {
       const signer = library.getSigner(account);
       zkApp
         .connect(signer)
-        .record(publicSignals, proof)
+        .recordSignedMessage(publicSignals[0], proof)
         .then((tx) => {
           setTxState(TxState.PENDING);
           tx.wait()
@@ -103,5 +103,34 @@ export const useRecord = (address: string) => {
     },
     [library, chainId, account, zkApp]
   );
-  return { txState, record: account ? record : undefined };
+  return {
+    txState,
+    recordSignedMessage: account ? recordSignedMessage : undefined,
+  };
+};
+
+export const useRegisterKey = (address: string) => {
+  const zkApp = useZKApp(address);
+  const [txState, setTxState] = useState<TxState>(TxState.NONE);
+  const { library, chainId, account } = useEthers();
+
+  const registerKey = useCallback(
+    async ({ pubKey }: { pubKey: [BigNumberish, BigNumberish] }) => {
+      if (!zkApp || !account) return;
+      if (!library) return;
+      const signer = library.getSigner(account);
+      zkApp
+        .connect(signer)
+        .registerKey(pubKey)
+        .then((tx) => {
+          setTxState(TxState.PENDING);
+          tx.wait()
+            .then(() => setTxState(TxState.CONFIRMED))
+            .catch(() => setTxState(TxState.FAILED));
+        })
+        .catch(() => setTxState(TxState.CANCELLED));
+    },
+    [library, chainId, account, zkApp]
+  );
+  return { txState, registerKey: account ? registerKey : undefined };
 };

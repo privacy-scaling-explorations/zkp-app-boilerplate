@@ -7,7 +7,7 @@ interface IVerifier {
         uint256[2] memory a,
         uint256[2][2] memory b,
         uint256[2] memory c,
-        uint256[3] memory input
+        uint256[7] memory input
     ) external view returns (bool r);
 }
 
@@ -19,26 +19,41 @@ contract ZkApp {
     }
 
     address public immutable verifier;
-    uint256[3][] public records; // just a sample var
+    uint256[2][] public pubKeys;
+    uint256[] public signedMessages;
 
     constructor(address verifier_) {
         verifier = verifier_;
     }
 
+    function registerKey(uint256[2] memory key) public {
+        require(pubKeys.length < 3, "Multisig for 3");
+        pubKeys.push(key);
+    }
+
     /**
      * @dev This is the sample function
      */
-    function record(uint256[3] memory publicSignals, Proof memory proof)
+    function recordSignedMessage(uint256 message, Proof memory proof)
         public
     {
+        require(pubKeys.length == 3, "Key registration is not done yet.");
+        uint256[7] memory publicSignals;
+        publicSignals[0] = message;
+        publicSignals[1] = pubKeys[0][0];
+        publicSignals[2] = pubKeys[1][0];
+        publicSignals[3] = pubKeys[2][0];
+        publicSignals[4] = pubKeys[0][1];
+        publicSignals[5] = pubKeys[1][1];
+        publicSignals[6] = pubKeys[2][1];
         require(verify(publicSignals, proof), "SNARK verification failed");
-        records.push(publicSignals);
+        signedMessages.push(message);
     }
 
     /**
      * Please adjust the IVerifier.sol and the array length of publicSignals
      */
-    function verify(uint256[3] memory publicSignals, Proof memory proof)
+    function verify(uint256[7] memory publicSignals, Proof memory proof)
         public
         view
         returns (bool)
@@ -52,7 +67,7 @@ contract ZkApp {
         return result;
     }
 
-    function totalRecords() public view returns (uint256) {
-        return records.length;
+    function totalSignedMessages() public view returns (uint256) {
+        return signedMessages.length;
     }
 }

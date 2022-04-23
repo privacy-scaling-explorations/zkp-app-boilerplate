@@ -17,13 +17,15 @@ describe("Test ZKP contract", function () {
   let zkApp: ZkApp;
   let deployer: SignerWithAddress;
   let client: ZKPClient;
-  let eddsa: EdDSA;
+  let accounts: [EdDSA, EdDSA, EdDSA];
   this.beforeEach(async () => {
     [deployer] = await ethers.getSigners();
     verifier = await new Verifier__factory(deployer).deploy();
-    eddsa = await new EdDSA(
-      "0xABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD"
-    ).init();
+    accounts = await Promise.all([
+      new EdDSA("0x1111").init(),
+      new EdDSA("0x2222").init(),
+      new EdDSA("0x3333").init(),
+    ]);
     zkApp = await new ZkApp__factory(deployer).deploy(verifier.address);
     client = await new ZKPClient().init(
       fs.readFileSync(
@@ -33,21 +35,24 @@ describe("Test ZKP contract", function () {
     );
   });
   it("Should able to create a zkp and verify them", async function () {
-    const msg = BigNumber.from("0xabcd");
-    const signature = await eddsa.sign(msg);
+    const message = BigNumber.from("0xabcd");
+    const signatures = await Promise.all(
+      accounts.map((acc) => acc.sign(message))
+    );
+    const F = accounts[0].babyjub.F;
     const proof = await client.prove({
-      M: msg.toBigInt(),
-      Ax: eddsa.scalarPubKey[0],
-      Ay: eddsa.scalarPubKey[1],
-      S: signature.S,
-      R8x: eddsa.babyjub.F.toObject(signature.R8[0]),
-      R8y: eddsa.babyjub.F.toObject(signature.R8[1]),
+      M: message.toBigInt(),
+      Ax: accounts.map((acc) => acc.scalarPubKey[0]),
+      Ay: accounts.map((acc) => acc.scalarPubKey[1]),
+      S: signatures.map((sig) => sig.S),
+      R8x: signatures.map((sig) => F.toObject(sig.R8[0])),
+      R8y: signatures.map((sig) => F.toObject(sig.R8[1])),
     });
-    expect(
-      await zkApp.verify(
-        [msg, eddsa.scalarPubKey[0], eddsa.scalarPubKey[1]],
-        proof
-      )
-    ).to.eq(true);
+    await zkApp.registerKey(accounts[0].scalarPubKey);
+    await zkApp.registerKey(accounts[1].scalarPubKey);
+    await zkApp.registerKey(accounts[2].scalarPubKey);
+    expect(await zkApp.totalSignedMessages()).to.eq(0);
+    await zkApp.recordSignedMessage(message, proof);
+    expect(await zkApp.totalSignedMessages()).to.eq(1);
   });
 });

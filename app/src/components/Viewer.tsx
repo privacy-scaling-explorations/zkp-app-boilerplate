@@ -1,7 +1,7 @@
-import { useTotalRecords } from "../hooks/useContract";
+import { useTotalSignedMessages } from "../hooks/useContract";
 
 function Viewer({ address }: { address: string }) {
-  const totalRecords = useTotalRecords(address);
+  const totalRecords = useTotalSignedMessages(address);
   return <div>Total records: {totalRecords?.toString() || "fetching..."}</div>;
 }
 
