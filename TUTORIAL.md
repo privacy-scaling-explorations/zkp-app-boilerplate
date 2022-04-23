@@ -202,8 +202,15 @@
    -        records.push(publicSignals);
    +        signedMessages.push(message);
         }
-
+ 
         /**
+         * Please adjust the IVerifier.sol and the array length of publicSignals
+         */
+   -    function verify(uint256[3] memory publicSignals, Proof memory proof)
+   +    function verify(uint256[7] memory publicSignals, Proof memory proof)
+            public
+            view
+            returns (bool)
    @@ -52,7 +67,7 @@ contract ZkApp {
             return result;
         }
