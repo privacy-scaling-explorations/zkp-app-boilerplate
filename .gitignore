@@ -112,3 +112,6 @@ typechain
 #Hardhat files
 cache
 artifacts
+
+#jetbrains IDE
+.idea
