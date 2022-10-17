@@ -20,5 +20,8 @@
   "private": true,
   "devDependencies": {
     "ts-node": "^10.4.0"
+  },
+  "engines": {
+    "node": ">=16 <17"
   }
 }
