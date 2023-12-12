@@ -4,7 +4,7 @@
   "description": "Zk app smart contracts",
   "private": true,
   "scripts": {
-    "postinstall": "#yarn build",
+    "postinstall": "yarn build",
     "test": "hardhat test",
     "build": "hardhat compile && tsc -p tsconfig.build.json",
     "hardhat": "hardhat",
